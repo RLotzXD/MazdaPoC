@@ -188,15 +188,9 @@ Be brief and friendly (1-2 sentences before VEHICLES line).`;
 
                     recognition.onend = async () => {
                         setIsListening(false);
-                        // Get the latest transcript value
-                        setTimeout(() => {
-                            setTranscript(current => {
-                                if (current.trim()) {
-                                    processUserInput(current.trim());
-                                }
-                                return current;
-                            });
-                        }, 100);
+                        if (transcript.trim()) {
+                            await processUserInput(transcript.trim());
+                        }
                     };
 
                     recognition.onerror = (event) => {
@@ -205,7 +199,7 @@ Be brief and friendly (1-2 sentences before VEHICLES line).`;
                     };
 
                     recognitionRef.current = recognition;
-                }, [processUserInput]);
+                }, []);
 
                 const processUserInput = async (userText) => {
                     setIsProcessing(true);
@@ -341,49 +335,26 @@ Be brief and friendly (1-2 sentences before VEHICLES line).`;
                                     )
                                 )
                             ),
-                            // Transcript Display with Status
+                            // Transcript Display
                             transcript && React.createElement(
                                 'div',
-                                { className: 'mb-4' },
-                                React.createElement(
-                                    'div',
-                                    { className: 'mb-2 p-3 bg-white/20 rounded text-white text-sm italic border-l-4 border-blue-400' },
-                                    `"${transcript}"`
-                                ),
-                                React.createElement(
-                                    'div',
-                                    { className: 'flex items-center gap-2 text-xs text-gray-300' },
-                                    React.createElement('div', { className: 'w-2 h-2 bg-green-400 rounded-full animate-pulse' }),
-                                    isProcessing ? 'Processing...' : 'Input received ✓'
-                                )
+                                { className: 'mb-4 p-3 bg-white/20 rounded text-white text-sm italic' },
+                                `"${transcript}"`
                             ),
-                            // Mic Button with Status Indicator
+                            // Mic Button
                             React.createElement(
-                                'div',
-                                { className: 'space-y-3' },
-                                // Status Line
-                                React.createElement(
-                                    'div',
-                                    { className: 'flex items-center gap-2 text-xs text-gray-300 h-5' },
-                                    isListening && React.createElement('div', { className: 'w-2 h-2 bg-red-500 rounded-full animate-pulse' }),
-                                    isProcessing && React.createElement('div', { className: 'w-2 h-2 bg-yellow-400 rounded-full animate-pulse' }),
-                                    isListening ? '🎤 Listening...' : isProcessing ? '⚙️ Processing...' : ''
-                                ),
-                                // Mic Button
-                                React.createElement(
-                                    'button',
-                                    {
-                                        onClick: toggleListening,
-                                        disabled: isProcessing,
-                                        className: `flex items-center justify-center gap-3 w-full px-6 py-4 rounded-lg font-semibold transition-all ${
-                                            isListening
-                                                ? 'bg-red-600 text-white pulse shadow-lg shadow-red-600/50'
-                                                : 'bg-gray-400 text-gray-900 hover:bg-gray-300'
-                                        } disabled:opacity-50`
-                                    },
-                                    React.createElement(isListening ? Stop : Mic, { className: 'w-5 h-5' }),
-                                    isListening ? 'Listening...' : 'Click to Speak'
-                                )
+                                'button',
+                                {
+                                    onClick: toggleListening,
+                                    disabled: isProcessing,
+                                    className: `flex items-center justify-center gap-3 w-full px-6 py-4 rounded-lg font-semibold transition-all ${
+                                        isListening
+                                            ? 'bg-red-600 text-white pulse'
+                                            : 'bg-gray-400 text-gray-900 hover:bg-gray-300'
+                                    } disabled:opacity-50`
+                                },
+                                React.createElement(isListening ? Stop : Mic, { className: 'w-5 h-5' }),
+                                isListening ? 'Listening...' : 'Click to Speak'
                             )
                         ),
                         // Right Vehicle Showcase
