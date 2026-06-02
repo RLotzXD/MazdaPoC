@@ -3,16 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mazda AI Co-Pilot - 2026 Fleet Explorer</title>
+    <title>Mazda - Find Your Perfect Vehicle</title>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-50 overflow-hidden">
+<body class="bg-gradient-to-br from-gray-100 via-gray-50 to-gray-100 overflow-hidden">
     <div id="root"></div>
 
     <script>
-        // Wait for React to load
         function startApp() {
             if (typeof React === 'undefined' || typeof ReactDOM === 'undefined') {
                 setTimeout(startApp, 100);
@@ -22,147 +21,57 @@
             const { useState, useRef, useEffect, useMemo } = React;
 
             // SVG Icons
-            const Shield = (props) => (
-                React.createElement('svg', { ...props, fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' },
-                    React.createElement('path', { strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'M9 12l2 2m0 0l4-4m4.618-4.618a9.006 9.006 0 01-2.605 15.647m-11.026-11.026A9.006 9.006 0 0112.3 3.464m0 0l4.243 4.243M12 12l4.243-4.243' })
-                )
+            const MazdaLogo = () => React.createElement('svg', { className: 'w-8 h-8 text-white', viewBox: '0 0 24 24', fill: 'currentColor' },
+                React.createElement('path', { d: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z' })
             );
 
-            const MessageSquare = (props) => (
-                React.createElement('svg', { ...props, fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' },
-                    React.createElement('path', { strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z' })
-                )
+            const Send = () => React.createElement('svg', { className: 'w-5 h-5', fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' },
+                React.createElement('path', { strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'M13 5l7 7m0 0l-7 7m7-7H6' })
             );
 
-            const Sliders = (props) => (
-                React.createElement('svg', { ...props, fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' },
-                    React.createElement('path', { strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4' })
-                )
+            const Mic = () => React.createElement('svg', { className: 'w-5 h-5', fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' },
+                React.createElement('path', { strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'M12 14.828v-6.656M9 4a3 3 0 116 0H9zm6 14.04c2.062-.694 3.521-2.227 3.521-3.978 0-1.29-.552-2.458-1.415-3.28M4 12h16' })
             );
 
-            const Zap = (props) => (
-                React.createElement('svg', { ...props, fill: 'currentColor', viewBox: '0 0 24 24' },
-                    React.createElement('path', { d: 'M13 2L3 14h9l-1 8 10-12h-9l1-8z' })
-                )
+            const MapPin = () => React.createElement('svg', { className: 'w-4 h-4', fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' },
+                React.createElement('path', { strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z' }),
+                React.createElement('path', { strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'M15 11a3 3 0 11-6 0 3 3 0 016 0z' })
             );
 
-            const Send = (props) => (
-                React.createElement('svg', { ...props, fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' },
-                    React.createElement('path', { strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'M12 19l9 2-9-18-9 18 9-2zm0 0v-8' })
-                )
+            const Search = () => React.createElement('svg', { className: 'w-5 h-5', fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' },
+                React.createElement('path', { strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z' })
             );
 
-            const X = (props) => (
-                React.createElement('svg', { ...props, fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' },
-                    React.createElement('path', { strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'M6 18L18 6M6 6l12 12' })
-                )
+            const Spark = () => React.createElement('svg', { className: 'w-4 h-4', fill: 'currentColor', viewBox: '0 0 24 24' },
+                React.createElement('path', { d: 'M13 2L3 14h9l-1 8 10-12h-9l1-8z' })
             );
 
-            // 2026 Mazda Fleet
-            const MAZDA_FLEET = [
-                {
-                    id: 'cx5-2026',
-                    name: '2026 Mazda CX-5',
-                    type: 'All-New Redesign',
-                    price: 31000,
-                    category: 'Crossovers & SUVs',
-                    attributes: ['gas', 'family', 'practical', 'daily-commute', 'spacious', 'redesigned'],
-                    specs: { engine: '2.5L Skyactiv-G', seats: 5, highlight: 'Stretched 4.5" Wheelbase, Google Built-In' }
-                },
-                {
-                    id: 'cx50-hybrid',
-                    name: '2026 Mazda CX-50 Hybrid',
-                    type: 'Rugged Hybrid Crossover',
-                    price: 34750,
-                    category: 'Electrified',
-                    attributes: ['hybrid', 'efficient', 'outdoor', 'rugged', 'all-wheel-drive'],
-                    specs: { engine: '2.5L Hybrid (38 MPG)', seats: 5, highlight: '551-mile total range, off-road drive modes' }
-                },
-                {
-                    id: 'cx90-phev',
-                    name: '2026 Mazda CX-90 PHEV',
-                    type: 'Premium 3-Row Plug-In Hybrid',
-                    price: 50695,
-                    category: 'Electrified',
-                    attributes: ['phev', 'electric-mode', 'luxury', 'family', '3-row', 'large'],
-                    specs: { engine: 'e-Skyactiv PHEV (56 MPGe)', seats: 7, highlight: 'All-electric short commutes, premium Kakenui stitching' }
-                },
-                {
-                    id: 'cx70-inline6',
-                    name: '2026 Mazda CX-70',
-                    type: 'Athletic Premium 2-Row SUV',
-                    price: 42750,
-                    category: 'Crossovers & SUVs',
-                    attributes: ['gas', 'mild-hybrid', 'performance', 'cargo', 'luxury', 'sporty'],
-                    specs: { engine: '3.3L Turbo Inline-6', seats: 5, highlight: '340 HP, massive rear cargo footprint' }
-                },
-                {
-                    id: 'mazda3-hatch',
-                    name: '2026 Mazda3 Hatchback',
-                    type: 'Premium Compact Hatch',
-                    price: 25650,
-                    category: 'Cars',
-                    attributes: ['gas', 'budget', 'compact', 'commuter', 'agile'],
-                    specs: { engine: '2.5L Naturally Aspirated', seats: 5, highlight: 'Premium cabin feel, urban parking friendly' }
-                },
-                {
-                    id: 'miata-mx5',
-                    name: '2026 Mazda MX-5 Miata',
-                    type: 'Pure Lightweight Roadster',
-                    price: 30430,
-                    category: 'Cars',
-                    attributes: ['gas', 'performance', 'sporty', 'convertible', 'fun'],
-                    specs: { engine: '2.0L Skyactiv-G', seats: 2, highlight: 'Perfect 50:50 weight balance, soft-top driving joy' }
-                },
+            // Vehicle Data
+            const VEHICLES = [
+                { id: 1, name: 'MAZDA3\nHATCHBACK', shortName: 'Mazda3', price: 25650, category: 'Cars', color: 'red', width: '90px', xPos: '2%' },
+                { id: 2, name: 'MAZDA3\nSEDAN', shortName: 'Mazda3', price: 26150, category: 'Cars', color: 'gray', width: '90px', xPos: '12%' },
+                { id: 3, name: 'MX-5\nMIATA', shortName: 'MX-5', price: 30430, category: 'Cars', color: 'red', width: '90px', xPos: '22%' },
+                { id: 4, name: 'CX-30', shortName: 'CX-30', price: 28500, category: 'SUVs', color: 'gray', width: '100px', xPos: '35%' },
+                { id: 5, name: 'CX-5', shortName: 'CX-5', price: 31000, category: 'SUVs', color: 'white', width: '120px', xPos: '48%' },
+                { id: 6, name: 'CX-50', shortName: 'CX-50', price: 34750, category: 'SUVs', color: 'white', width: '120px', xPos: '62%' },
+                { id: 7, name: 'CX-70', shortName: 'CX-70', price: 42750, category: 'SUVs', color: 'gray', width: '130px', xPos: '76%' },
+                { id: 8, name: 'CX-90', shortName: 'CX-90', price: 50695, category: 'SUVs', color: 'red', width: '130px', xPos: '90%' },
             ];
 
-            const QUERY_PILLS = [
-                {
-                    text: 'I need an outdoor-friendly SUV with excellent fuel economy.',
-                    keywords: ['outdoor', 'suv', 'efficient', 'fuel', 'economy', 'rugged', 'hybrid']
-                },
-                {
-                    text: 'Show me a spacious family vehicle with 3 rows of seats.',
-                    keywords: ['family', 'spacious', '3-row', 'seats', 'large', 'practical', 'phev']
-                },
-                {
-                    text: 'I want an affordable, fun weekend car with sports car handling.',
-                    keywords: ['affordable', 'fun', 'performance', 'sporty', 'convertible', 'agile', 'lightweight']
-                }
+            const QUICK_REPLIES = [
+                { text: 'I would love some help finding the right car.', category: null },
+                { text: 'Show me sporty, fun cars', category: 'Cars' },
+                { text: 'I need a spacious family SUV', category: 'SUVs' },
+                { text: 'What\'s the most affordable Mazda?', category: null },
             ];
 
-            const AI_RESPONSES = {
-                responses: {
-                    0: 'Perfect! I\'ve found our best outdoor-friendly SUVs with exceptional fuel efficiency. The CX-50 Hybrid is an excellent match—it combines rugged capability with 38 MPG and 551-mile range. The CX-5 is also a great choice for daily driving.',
-                    1: 'Excellent choice! The CX-90 PHEV is our premium 3-row family vehicle with electric-only commuting capability and luxury features. It seats 7 and offers an electric-first experience for your daily needs.',
-                    2: 'Great! The MX-5 Miata is perfect for weekend adventures—it\'s affordable, lightweight, and engineered for pure driving joy with that iconic 50:50 weight balance. It\'s a weekend enthusiast\'s dream!'
-                }
-            };
-
-            const calculateMatchScore = (vehicle, keywords) => {
-                if (!keywords || keywords.length === 0) return 30;
-                let matches = 0;
-                const vehicleAttributesStr = vehicle.attributes.join(' ').toLowerCase();
-                keywords.forEach(keyword => {
-                    if (vehicleAttributesStr.includes(keyword.toLowerCase())) {
-                        matches++;
-                    }
-                });
-                const baseScore = (matches / keywords.length) * 100;
-                let finalScore = Math.min(99, Math.max(20, baseScore));
-                return Math.round(finalScore);
-            };
-
-            // Main Component
-            function MazdaAICoPilot() {
-                const [selectedCategory, setSelectedCategory] = useState('All Vehicles');
+            function MazdaShowcase() {
                 const [chatMessages, setChatMessages] = useState([
-                    { role: 'assistant', text: 'Welcome to Mazda. Tell me about your lifestyle, family needs, or daily commute, and I will tailor the 2026 lineup to you.' }
+                    { role: 'assistant', text: 'Welcome to Mazda. Do you know which model you would like to explore or would like help finding the right Mazda driving experience for you?' }
                 ]);
                 const [inputValue, setInputValue] = useState('');
-                const [currentQuery, setCurrentQuery] = useState('');
+                const [selectedVehicle, setSelectedVehicle] = useState(null);
                 const [isAnalyzing, setIsAnalyzing] = useState(false);
-                const [showChatMobile, setShowChatMobile] = useState(false);
                 const chatEndRef = useRef(null);
 
                 useEffect(() => {
@@ -171,269 +80,184 @@
                     }
                 }, [chatMessages]);
 
-                const filteredAndScoredVehicles = useMemo(() => {
-                    let filtered = MAZDA_FLEET;
-                    if (selectedCategory !== 'All Vehicles') {
-                        filtered = filtered.filter(v => v.category === selectedCategory);
-                    }
-                    const scored = filtered.map(vehicle => ({
-                        ...vehicle,
-                        matchScore: calculateMatchScore(vehicle, currentQuery.split(' ').filter(w => w.length > 2))
-                    }));
-                    return scored.sort((a, b) => b.matchScore - a.matchScore);
-                }, [selectedCategory, currentQuery]);
-
-                const handleQueryPill = async (pillIndex) => {
-                    const pill = QUERY_PILLS[pillIndex];
-                    setChatMessages(prev => [...prev, { role: 'user', text: pill.text }]);
+                const handleQuickReply = (reply) => {
+                    setChatMessages(prev => [...prev, { role: 'user', text: reply.text }]);
                     setIsAnalyzing(true);
+
                     setTimeout(() => {
-                        setCurrentQuery(pill.text);
-                        setChatMessages(prev => [...prev, {
-                            role: 'assistant',
-                            text: AI_RESPONSES.responses[pillIndex]
-                        }]);
+                        if (reply.category === 'Cars') {
+                            setSelectedVehicle(['Mazda3', 'MX-5']);
+                            setChatMessages(prev => [...prev, {
+                                role: 'assistant',
+                                text: 'Great! I\'ve highlighted our fun and sporty cars. The Mazda3 offers premium cabin feel with agile handling, while the MX-5 Miata is the ultimate lightweight driving experience.'
+                            }]);
+                        } else if (reply.category === 'SUVs') {
+                            setSelectedVehicle(['CX-5', 'CX-90']);
+                            setChatMessages(prev => [...prev, {
+                                role: 'assistant',
+                                text: 'Perfect! The CX-5 is our all-new redesigned crossover with Google Built-In, and the CX-90 PHEV is our premium 3-row family vehicle with room for everyone.'
+                            }]);
+                        } else {
+                            setSelectedVehicle(['Mazda3']);
+                            setChatMessages(prev => [...prev, {
+                                role: 'assistant',
+                                text: 'The Mazda3 Hatchback at $25,650 is our most affordable model. It combines premium cabin design with practical everyday driving.'
+                            }]);
+                        }
                         setIsAnalyzing(false);
                     }, 1200);
                 };
 
-                const handleSubmitQuery = async () => {
+                const handleSubmit = () => {
                     if (!inputValue.trim()) return;
-                    setChatMessages(prev => [...prev, { role: 'user', text: inputValue }]);
-                    setIsAnalyzing(true);
-                    setTimeout(() => {
-                        setCurrentQuery(inputValue);
-                        const topMatch = filteredAndScoredVehicles[0];
-                        setChatMessages(prev => [...prev, {
-                            role: 'assistant',
-                            text: `Great! I've analyzed your needs. The ${topMatch.name} appears to be an excellent match for you. It offers ${topMatch.specs.highlight.toLowerCase()}. Would you like to learn more about this model or explore other options?`
-                        }]);
-                        setIsAnalyzing(false);
-                    }, 1200);
+                    handleQuickReply({ text: inputValue, category: null });
                     setInputValue('');
                 };
 
-                const categories = ['All Vehicles', 'Crossovers & SUVs', 'Electrified', 'Cars'];
-
                 return React.createElement(
                     'div',
-                    { className: 'flex flex-col lg:flex-row h-screen bg-gray-50' },
-                    // LEFT SIDE
+                    { className: 'w-screen h-screen flex overflow-hidden' },
+                    // Header
                     React.createElement(
                         'div',
-                        { className: 'flex-1 lg:w-2/3 flex flex-col overflow-hidden' },
-                        // Header
+                        { className: 'fixed top-0 w-full z-50 bg-black/30 backdrop-blur-sm border-b border-white/10' },
                         React.createElement(
                             'div',
-                            { className: 'bg-white border-b border-gray-200 px-6 py-6 sticky top-0 z-30' },
+                            { className: 'flex items-center justify-between px-8 py-4' },
+                            // Left Nav
                             React.createElement(
                                 'div',
-                                { className: 'mb-4' },
-                                React.createElement('h1', { className: 'text-3xl font-bold text-gray-900' }, 'Explore the 2026 Mazda Range'),
-                                React.createElement('p', { className: 'text-gray-600 text-sm mt-1' }, 'Personalized by AI')
+                                { className: 'flex items-center gap-8' },
+                                React.createElement('div', { className: 'text-white text-xs font-light tracking-widest' }, 'VEHICLES'),
+                                React.createElement('div', { className: 'text-white text-xs font-light tracking-widest' }, 'SHOPPING TOOLS'),
+                                React.createElement('div', { className: 'text-white text-xs font-light tracking-widest' }, 'WHAT DRIVES US')
                             ),
+                            // Center Logo
                             React.createElement(
                                 'div',
-                                { className: 'flex gap-2 flex-wrap' },
-                                categories.map(cat =>
-                                    React.createElement(
-                                        'button',
-                                        {
-                                            key: cat,
-                                            onClick: () => setSelectedCategory(cat),
-                                            className: `px-4 py-2 rounded-lg transition-all text-sm font-semibold ${selectedCategory === cat ? 'bg-red-600 text-white shadow-lg' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`
-                                        },
-                                        cat
-                                    )
-                                )
-                            )
-                        ),
-                        // Grid
-                        React.createElement(
-                            'div',
-                            { className: 'flex-1 overflow-y-auto px-6 py-6' },
+                                { className: 'absolute left-1/2 transform -translate-x-1/2' },
+                                React.createElement('div', { className: 'w-8 h-8 border-2 border-white rounded-full' })
+                            ),
+                            // Right Nav
                             React.createElement(
                                 'div',
-                                { className: 'grid grid-cols-1 md:grid-cols-2 gap-6' },
-                                filteredAndScoredVehicles.map(vehicle =>
-                                    React.createElement(
-                                        'div',
-                                        {
-                                            key: vehicle.id,
-                                            className: `bg-white rounded-xl border-2 border-gray-200 overflow-hidden transition-all duration-300 transform hover:shadow-xl ${vehicle.matchScore < 50 ? 'opacity-40 blur-sm' : 'opacity-100 hover:scale-105'}`
-                                        },
-                                        React.createElement(
-                                            'div',
-                                            { className: 'relative bg-gradient-to-br from-gray-800 to-gray-900 px-6 py-6 text-white' },
-                                            React.createElement(
-                                                'div',
-                                                { className: 'absolute top-4 right-4 bg-red-600 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1' },
-                                                React.createElement(Zap, { className: 'w-3 h-3' }),
-                                                `AI Match: ${vehicle.matchScore}%`
-                                            ),
-                                            React.createElement('h3', { className: 'text-xl font-bold pr-24' }, vehicle.name),
-                                            React.createElement('p', { className: 'text-sm text-gray-300' }, vehicle.type)
-                                        ),
-                                        React.createElement(
-                                            'div',
-                                            { className: 'px-6 py-4 border-b border-gray-100' },
-                                            React.createElement('span', { className: 'text-2xl font-bold text-gray-900' }, `$${vehicle.price.toLocaleString()}`)
-                                        ),
-                                        React.createElement(
-                                            'div',
-                                            { className: 'px-6 py-4 space-y-3' },
-                                            React.createElement(
-                                                'div',
-                                                { className: 'flex items-start gap-3' },
-                                                React.createElement(Shield, { className: 'w-5 h-5 text-red-600 flex-shrink-0 mt-0.5' }),
-                                                React.createElement(
-                                                    'div',
-                                                    { className: 'flex-1 text-sm' },
-                                                    React.createElement('p', { className: 'text-gray-600' }, 'Engine'),
-                                                    React.createElement('p', { className: 'font-semibold text-gray-900' }, vehicle.specs.engine)
-                                                )
-                                            ),
-                                            React.createElement(
-                                                'div',
-                                                { className: 'flex items-start gap-3' },
-                                                React.createElement(MessageSquare, { className: 'w-5 h-5 text-red-600 flex-shrink-0 mt-0.5' }),
-                                                React.createElement(
-                                                    'div',
-                                                    { className: 'flex-1 text-sm' },
-                                                    React.createElement('p', { className: 'text-gray-600' }, 'Seating'),
-                                                    React.createElement('p', { className: 'font-semibold text-gray-900' }, `${vehicle.specs.seats} Passengers`)
-                                                )
-                                            ),
-                                            React.createElement(
-                                                'div',
-                                                { className: 'flex items-start gap-3' },
-                                                React.createElement(Sliders, { className: 'w-5 h-5 text-red-600 flex-shrink-0 mt-0.5' }),
-                                                React.createElement(
-                                                    'div',
-                                                    { className: 'flex-1 text-sm' },
-                                                    React.createElement('p', { className: 'text-gray-600' }, 'Highlight'),
-                                                    React.createElement('p', { className: 'font-semibold text-gray-900' }, vehicle.specs.highlight)
-                                                )
-                                            )
-                                        ),
-                                        React.createElement(
-                                            'div',
-                                            { className: 'px-6 py-4 border-t border-gray-100' },
-                                            React.createElement('button', { className: 'w-full px-4 py-2 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition-colors' }, 'Learn More')
-                                        )
-                                    )
-                                )
+                                { className: 'flex items-center gap-6' },
+                                React.createElement(
+                                    'div',
+                                    { className: 'flex items-center gap-2 text-white text-sm' },
+                                    React.createElement(MapPin, null),
+                                    React.createElement('span', null, '92602')
+                                ),
+                                React.createElement('button', { className: 'px-4 py-1.5 border border-white text-white text-xs font-light hover:bg-white hover:text-black transition-colors' }, 'View Inventory'),
+                                React.createElement('button', { className: 'px-4 py-1.5 bg-white text-black text-xs font-semibold hover:bg-gray-200 transition-colors' }, 'Build Yours'),
+                                React.createElement('button', { className: 'text-white hover:text-gray-300' }, React.createElement(Search, null))
                             )
                         )
                     ),
-                    // Mobile Chat Button
-                    React.createElement(
-                        'button',
-                        {
-                            onClick: () => setShowChatMobile(!showChatMobile),
-                            className: 'lg:hidden fixed bottom-6 right-6 bg-red-600 text-white p-4 rounded-full shadow-lg hover:bg-red-700 transition-all z-40'
-                        },
-                        React.createElement(MessageSquare, { className: 'w-6 h-6' })
-                    ),
-                    // RIGHT SIDE - CHAT
+                    // Main Content
                     React.createElement(
                         'div',
-                        {
-                            className: `fixed lg:static inset-0 lg:inset-auto z-50 lg:z-auto lg:w-1/3 bg-white border-l border-gray-200 flex flex-col overflow-hidden transition-all duration-300 ${showChatMobile ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}`
-                        },
-                        React.createElement(
-                            'button',
-                            {
-                                onClick: () => setShowChatMobile(false),
-                                className: 'lg:hidden absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-lg z-50'
-                            },
-                            React.createElement(X, { className: 'w-5 h-5' })
-                        ),
+                        { className: 'flex w-full h-full pt-20' },
+                        // Left Chat Panel
                         React.createElement(
                             'div',
-                            { className: 'bg-gradient-to-r from-red-600 to-red-700 text-white px-6 py-6 flex items-center gap-3' },
-                            React.createElement(MessageSquare, { className: 'w-6 h-6' }),
+                            { className: 'w-80 bg-black/40 backdrop-blur-md p-8 flex flex-col overflow-y-auto' },
+                            // Chat Messages
                             React.createElement(
                                 'div',
-                                null,
-                                React.createElement('h2', { className: 'font-bold text-lg' }, 'Mazda AI Co-Pilot'),
-                                React.createElement('p', { className: 'text-xs text-red-100' }, 'Your personal vehicle advisor')
-                            )
-                        ),
-                        React.createElement(
-                            'div',
-                            { className: 'flex-1 overflow-y-auto px-6 py-6 space-y-4' },
-                            chatMessages.map((msg, idx) =>
-                                React.createElement(
-                                    'div',
-                                    { key: idx, className: `flex gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}` },
+                                { className: 'flex-1 space-y-4 mb-6' },
+                                chatMessages.map((msg, idx) =>
                                     React.createElement(
                                         'div',
-                                        { className: `max-w-xs px-4 py-3 rounded-lg text-sm transition-all ${msg.role === 'user' ? 'bg-red-600 text-white rounded-br-none' : 'bg-gray-100 text-gray-900 rounded-bl-none'}` },
-                                        msg.text
+                                        { key: idx, className: `${msg.role === 'user' ? 'text-right' : 'text-left'}` },
+                                        React.createElement(
+                                            'div',
+                                            { className: `inline-block max-w-xs px-4 py-3 rounded-lg text-sm ${msg.role === 'user' ? 'bg-red-600 text-white' : 'bg-gray-400 text-gray-900'}` },
+                                            msg.text
+                                        )
+                                    )
+                                ),
+                                isAnalyzing && React.createElement(
+                                    'div',
+                                    { className: 'flex gap-2 items-center' },
+                                    React.createElement('div', { className: 'w-2 h-2 bg-gray-400 rounded-full animate-bounce' }),
+                                    React.createElement('div', { className: 'w-2 h-2 bg-gray-400 rounded-full animate-bounce', style: { animationDelay: '0.1s' } }),
+                                    React.createElement('div', { className: 'w-2 h-2 bg-gray-400 rounded-full animate-bounce', style: { animationDelay: '0.2s' } })
+                                ),
+                                React.createElement('div', { ref: chatEndRef })
+                            ),
+                            // Quick Replies
+                            React.createElement(
+                                'div',
+                                { className: 'space-y-2 mb-4' },
+                                QUICK_REPLIES.map((reply, idx) =>
+                                    React.createElement(
+                                        'button',
+                                        {
+                                            key: idx,
+                                            onClick: () => handleQuickReply(reply),
+                                            disabled: isAnalyzing,
+                                            className: 'w-full text-left px-4 py-3 bg-gray-400 text-gray-900 text-sm rounded hover:bg-gray-300 transition-colors disabled:opacity-50 font-light'
+                                        },
+                                        reply.text
                                     )
                                 )
                             ),
-                            isAnalyzing && React.createElement(
-                                'div',
-                                { className: 'flex gap-3 justify-start' },
-                                React.createElement(
-                                    'div',
-                                    { className: 'bg-gray-100 text-gray-900 px-4 py-3 rounded-lg text-sm' },
-                                    React.createElement(
-                                        'div',
-                                        { className: 'flex gap-2 items-center' },
-                                        React.createElement('div', { className: 'w-2 h-2 bg-red-600 rounded-full animate-bounce' }),
-                                        React.createElement('div', { className: 'w-2 h-2 bg-red-600 rounded-full animate-bounce', style: { animationDelay: '0.1s' } }),
-                                        React.createElement('div', { className: 'w-2 h-2 bg-red-600 rounded-full animate-bounce', style: { animationDelay: '0.2s' } })
-                                    )
-                                )
-                            ),
-                            React.createElement('div', { ref: chatEndRef })
-                        ),
-                        React.createElement(
-                            'div',
-                            { className: 'px-6 py-4 border-t border-gray-200 space-y-2' },
-                            React.createElement('p', { className: 'text-xs text-gray-600 font-semibold uppercase' }, 'Try these queries:'),
-                            QUERY_PILLS.map((pill, idx) =>
-                                React.createElement(
-                                    'button',
-                                    {
-                                        key: idx,
-                                        onClick: () => handleQueryPill(idx),
-                                        disabled: isAnalyzing,
-                                        className: 'w-full text-left px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs hover:bg-gray-100 transition-colors disabled:opacity-50 font-medium text-gray-700'
-                                    },
-                                    pill.text
-                                )
-                            )
-                        ),
-                        React.createElement(
-                            'div',
-                            { className: 'px-6 py-4 border-t border-gray-200' },
+                            // Input
                             React.createElement(
                                 'div',
-                                { className: 'flex gap-2' },
+                                { className: 'flex gap-2 items-center bg-gray-400 px-4 py-3 rounded' },
+                                React.createElement(Spark, null),
                                 React.createElement(
                                     'input',
                                     {
                                         type: 'text',
                                         value: inputValue,
                                         onChange: e => setInputValue(e.target.value),
-                                        onKeyPress: e => e.key === 'Enter' && handleSubmitQuery(),
-                                        placeholder: 'Tell me about your needs...',
-                                        className: 'flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 text-sm',
-                                        disabled: isAnalyzing
+                                        onKeyPress: e => e.key === 'Enter' && handleSubmit(),
+                                        placeholder: 'Ask anything',
+                                        className: 'flex-1 bg-transparent text-gray-900 placeholder-gray-600 outline-none text-sm'
                                     }
                                 ),
-                                React.createElement(
-                                    'button',
-                                    {
-                                        onClick: handleSubmitQuery,
-                                        disabled: isAnalyzing || !inputValue.trim(),
-                                        className: 'px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center gap-2'
-                                    },
-                                    React.createElement(Send, { className: 'w-4 h-4' })
+                                React.createElement('button', { onClick: handleSubmit, className: 'text-gray-600 hover:text-gray-900' }, React.createElement(Mic, null))
+                            )
+                        ),
+                        // Right Vehicle Showcase
+                        React.createElement(
+                            'div',
+                            { className: 'flex-1 bg-gradient-to-b from-gray-200/50 to-gray-300/50 relative flex items-center justify-center px-16' },
+                            // Vehicle Display Area
+                            React.createElement(
+                                'div',
+                                { className: 'relative w-full h-96 flex items-end justify-center gap-4' },
+                                VEHICLES.map(vehicle =>
+                                    React.createElement(
+                                        'div',
+                                        {
+                                            key: vehicle.id,
+                                            className: `flex flex-col items-center transition-all duration-300 cursor-pointer ${
+                                                selectedVehicle?.includes(vehicle.shortName) ? 'opacity-100' : 'opacity-30 blur-sm'
+                                            }`,
+                                            onClick: () => setSelectedVehicle([vehicle.shortName])
+                                        },
+                                        React.createElement(
+                                            'div',
+                                            { className: `${vehicle.color === 'red' ? 'bg-red-500' : vehicle.color === 'white' ? 'bg-white' : 'bg-gray-400'} rounded-full mb-2`, style: { width: vehicle.width, height: '140px' } }
+                                        ),
+                                        React.createElement(
+                                            'div',
+                                            { className: 'text-center text-gray-900 text-xs font-light tracking-wider whitespace-pre-line' },
+                                            vehicle.name
+                                        )
+                                    )
+                                )
+                            ),
+                            // Info Display
+                            selectedVehicle && React.createElement(
+                                'div',
+                                { className: 'absolute bottom-8 left-8 bg-white/90 backdrop-blur-sm px-6 py-4 rounded text-gray-900 max-w-xs' },
+                                React.createElement('p', { className: 'text-sm font-light' },
+                                    `Starting at $${VEHICLES.find(v => v.shortName === selectedVehicle[0])?.price.toLocaleString()}`
                                 )
                             )
                         )
@@ -441,9 +265,8 @@
                 );
             }
 
-            // Render
             const root = ReactDOM.createRoot(document.getElementById('root'));
-            root.render(React.createElement(MazdaAICoPilot));
+            root.render(React.createElement(MazdaShowcase));
         }
 
         startApp();
