@@ -37,34 +37,46 @@
                 React.createElement('path', { strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z' })
             );
 
-            const Spark = () => React.createElement('svg', { className: 'w-4 h-4', fill: 'currentColor', viewBox: '0 0 24 24' },
-                React.createElement('path', { d: 'M13 2L3 14h9l-1 8 10-12h-9l1-8z' })
-            );
-
             const Stop = () => React.createElement('svg', { className: 'w-6 h-6', fill: 'currentColor', viewBox: '0 0 24 24' },
                 React.createElement('rect', { x: '6', y: '6', width: '12', height: '12', rx: '2' })
             );
 
             // Vehicle Data
             const VEHICLES = [
-                { id: 1, name: 'MAZDA3\nHATCHBACK', shortName: 'Mazda3 Hatchback', price: 25650, keywords: ['hatchback', 'compact', 'affordable', 'fun', 'agile', 'urban', 'budget-friendly', 'economical'] },
-                { id: 2, name: 'MAZDA3\nSEDAN', shortName: 'Mazda3 Sedan', price: 26150, keywords: ['sedan', 'compact', 'affordable', 'practical', 'commute', 'daily', 'economical'] },
-                { id: 3, name: 'MX-5\nMIATA', shortName: 'MX-5 Miata', price: 30430, keywords: ['miata', 'roadster', 'convertible', 'sports', 'fun', 'lightweight', 'performance', 'weekend', 'affordable', 'sporty'] },
-                { id: 4, name: 'CX-30', shortName: 'CX-30', price: 28500, keywords: ['cx-30', 'crossover', 'compact', 'affordable', 'practical', 'suv'] },
-                { id: 5, name: 'CX-5', shortName: 'CX-5', price: 31000, keywords: ['cx-5', 'crossover', 'suv', 'family', 'spacious', 'practical', 'google built-in', 'redesigned', 'new'] },
-                { id: 6, name: 'CX-50', shortName: 'CX-50', price: 34750, keywords: ['cx-50', 'hybrid', 'efficient', 'outdoor', 'rugged', 'fuel economy', 'eco-friendly', 'all-wheel-drive'] },
-                { id: 7, name: 'CX-70', shortName: 'CX-70', price: 42750, keywords: ['cx-70', 'performance', 'luxury', 'powerful', 'cargo', 'sporty', 'turbo', 'premium', 'hp'] },
-                { id: 8, name: 'CX-90', shortName: 'CX-90', price: 50695, keywords: ['cx-90', 'phev', 'family', '3-row', 'seats', 'luxury', 'spacious', 'electric', 'hybrid', 'premium'] },
+                { id: 1, name: 'MAZDA3\nHATCHBACK', shortName: 'Mazda3 Hatchback', displayName: 'Mazda3 Hatchback', price: 25650, keywords: ['hatchback', 'compact', 'affordable', 'fun', 'agile', 'urban', 'budget', 'economical', 'practical', 'commute'] },
+                { id: 2, name: 'MAZDA3\nSEDAN', shortName: 'Mazda3 Sedan', displayName: 'Mazda3 Sedan', price: 26150, keywords: ['sedan', 'compact', 'affordable', 'practical', 'commute', 'daily', 'economical', 'family', 'professional'] },
+                { id: 3, name: 'MX-5\nMIATA', shortName: 'MX-5 Miata', displayName: 'MX-5 Miata', price: 30430, keywords: ['miata', 'roadster', 'convertible', 'sports', 'fun', 'lightweight', 'performance', 'weekend', 'affordable', 'sporty', 'thrilling', 'joy'] },
+                { id: 4, name: 'CX-30', shortName: 'CX-30', displayName: 'CX-30', price: 28500, keywords: ['cx-30', 'crossover', 'compact', 'affordable', 'practical', 'suv', 'versatile', 'young', 'active'] },
+                { id: 5, name: 'CX-5', shortName: 'CX-5', displayName: 'CX-5', price: 31000, keywords: ['cx-5', 'crossover', 'suv', 'family', 'spacious', 'practical', 'google', 'redesigned', 'new', 'reliable', 'comfortable', 'everyday'] },
+                { id: 6, name: 'CX-50', shortName: 'CX-50', displayName: 'CX-50 Hybrid', price: 34750, keywords: ['cx-50', 'hybrid', 'efficient', 'outdoor', 'rugged', 'fuel economy', 'eco-friendly', 'all-wheel-drive', 'adventure', 'range', 'off-road', 'capabilities'] },
+                { id: 7, name: 'CX-70', shortName: 'CX-70', displayName: 'CX-70', price: 42750, keywords: ['cx-70', 'performance', 'luxury', 'powerful', 'cargo', 'sporty', 'turbo', 'premium', 'hp', 'high-performance', 'powerful', 'fun'] },
+                { id: 8, name: 'CX-90', shortName: 'CX-90', displayName: 'CX-90 PHEV', price: 50695, keywords: ['cx-90', 'phev', 'family', '3-row', 'seats', 'luxury', 'spacious', 'electric', 'hybrid', 'premium', 'large', 'children', 'passengers'] },
+            ];
+
+            const GUIDANCE_PROMPTS = [
+                { text: 'I want something fun and affordable', category: 'fun' },
+                { text: 'I need a spacious family vehicle', category: 'family' },
+                { text: 'Show me eco-friendly options', category: 'eco' },
+                { text: 'I want a luxury performance car', category: 'performance' },
             ];
 
             async function callGeminiAPI(userInput) {
-                const systemPrompt = `You are a Mazda vehicle recommendation assistant. Based on what the user says, recommend 1-2 Mazda models from: Mazda3 Hatchback, Mazda3 Sedan, MX-5 Miata, CX-30, CX-5, CX-50, CX-70, CX-90.
+                const vehicleList = VEHICLES.map(v => `- ${v.displayName} ($${v.price.toLocaleString()})`).join('\n');
 
-Respond with:
-1. A brief friendly response (1-2 sentences)
-2. Vehicle recommendations in this format at the end: RECOMMEND: [vehicle name], [vehicle name]
+                const systemPrompt = `You are a Mazda vehicle recommendation assistant. Your job is to listen to what the customer wants and recommend the BEST Mazda vehicle(s) for them.
 
-Example: "That sounds like you'd love our CX-5! RECOMMEND: CX-5"`;
+Available Mazda vehicles:
+${vehicleList}
+
+Based on what the user says, recommend 1-2 vehicles that fit their needs best.
+
+IMPORTANT: You MUST end your response with exactly this format:
+VEHICLES: [vehicle name], [vehicle name]
+
+For example if recommending MX-5 Miata and Mazda3 Hatchback:
+"That sounds perfect! The MX-5 Miata is our legendary lightweight sports car, and the Mazda3 Hatchback offers fun and affordability. VEHICLES: MX-5 Miata, Mazda3 Hatchback"
+
+Always be friendly and brief (2-3 sentences max before the VEHICLES line).`;
 
                 try {
                     const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
@@ -73,36 +85,59 @@ Example: "That sounds like you'd love our CX-5! RECOMMEND: CX-5"`;
                         body: JSON.stringify({
                             contents: [{
                                 parts: [{
-                                    text: `${systemPrompt}\n\nUser says: "${userInput}"`
+                                    text: `${systemPrompt}\n\nCustomer says: "${userInput}"`
                                 }]
                             }],
                             generationConfig: {
                                 temperature: 0.7,
-                                maxOutputTokens: 150,
+                                maxOutputTokens: 200,
                             }
                         })
                     });
 
+                    if (!response.ok) {
+                        throw new Error(`API error: ${response.status}`);
+                    }
+
                     const data = await response.json();
                     const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+                    console.log('Gemini response:', text);
                     return text;
                 } catch (error) {
                     console.error('Gemini API error:', error);
-                    return 'Sorry, I encountered an error. Please try again.';
+                    return 'I apologize, I\'m having trouble processing that. Could you try again? VEHICLES: CX-5';
                 }
             }
 
             function extractVehicleNames(geminiResponse) {
-                const recommendMatch = geminiResponse.match(/RECOMMEND:\s*(.+?)(?:\n|$)/i);
-                if (!recommendMatch) return [];
+                const vehiclesMatch = geminiResponse.match(/VEHICLES:\s*(.+?)(?:\n|$)/i);
+                if (!vehiclesMatch) {
+                    console.warn('No VEHICLES: tag found in response');
+                    return [];
+                }
 
-                const names = recommendMatch[1].split(',').map(name => name.trim());
-                return names.filter(name => VEHICLES.some(v => v.shortName.toLowerCase().includes(name.toLowerCase())));
+                const vehicleNames = vehiclesMatch[1].split(',').map(name => name.trim());
+                const matchedVehicles = [];
+
+                vehicleNames.forEach(name => {
+                    const foundVehicle = VEHICLES.find(v =>
+                        v.displayName.toLowerCase().includes(name.toLowerCase()) ||
+                        name.toLowerCase().includes(v.shortName.toLowerCase()) ||
+                        name.toLowerCase().includes(v.displayName.split(' ')[0].toLowerCase())
+                    );
+                    if (foundVehicle) {
+                        matchedVehicles.push(foundVehicle.displayName);
+                    }
+                });
+
+                console.log('Extracted vehicles:', matchedVehicles);
+                return matchedVehicles;
             }
 
             function MazdaShowcase() {
                 const [chatMessages, setChatMessages] = useState([
-                    { role: 'assistant', text: 'Welcome to Mazda. Click the microphone and tell me what you\'re looking for.' }
+                    { role: 'assistant', text: 'Welcome to Mazda! I\'m here to help you find the perfect vehicle.' },
+                    { role: 'assistant', text: 'Tell me about your lifestyle, what matters to you, or what kind of driving experience you\'re looking for. Click the microphone and start speaking!' }
                 ]);
                 const [selectedVehicles, setSelectedVehicles] = useState([]);
                 const [isListening, setIsListening] = useState(false);
@@ -110,6 +145,13 @@ Example: "That sounds like you'd love our CX-5! RECOMMEND: CX-5"`;
                 const [transcript, setTranscript] = useState('');
                 const recognitionRef = useRef(null);
                 const synthRef = useRef(window.speechSynthesis);
+                const chatEndRef = useRef(null);
+
+                useEffect(() => {
+                    if (chatEndRef.current) {
+                        chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }, [chatMessages]);
 
                 // Initialize Web Speech API
                 useEffect(() => {
@@ -132,12 +174,12 @@ Example: "That sounds like you'd love our CX-5! RECOMMEND: CX-5"`;
                     recognition.onresult = (event) => {
                         let interim = '';
                         for (let i = event.resultIndex; i < event.results.length; i++) {
-                            const transcript = event.results[i][0].transcript;
+                            const trans = event.results[i][0].transcript;
                             if (event.results[i].isFinal) {
-                                interim += transcript + ' ';
+                                interim += trans + ' ';
                             }
                         }
-                        setTranscript(interim);
+                        if (interim) setTranscript(interim);
                     };
 
                     recognition.onend = async () => {
@@ -153,29 +195,26 @@ Example: "That sounds like you'd love our CX-5! RECOMMEND: CX-5"`;
                     };
 
                     recognitionRef.current = recognition;
-                }, [transcript]);
+                }, []);
 
                 const processUserInput = async (userText) => {
                     setIsProcessing(true);
-
-                    // Add user message
                     setChatMessages(prev => [...prev, { role: 'user', text: userText }]);
 
-                    // Get Gemini response
                     const geminiResponse = await callGeminiAPI(userText);
-
-                    // Extract vehicle names from response
                     const vehicleNames = extractVehicleNames(geminiResponse);
-                    setSelectedVehicles(vehicleNames);
 
-                    // Extract main response text (before RECOMMEND:)
-                    const mainResponse = geminiResponse.split('RECOMMEND:')[0].trim();
+                    console.log('Vehicle names extracted:', vehicleNames);
 
-                    // Add assistant message
+                    if (vehicleNames.length > 0) {
+                        setSelectedVehicles(vehicleNames);
+                    }
+
+                    const mainResponse = geminiResponse.split('VEHICLES:')[0].trim();
                     setChatMessages(prev => [...prev, { role: 'assistant', text: mainResponse }]);
 
-                    // Speak response
                     speakResponse(mainResponse);
+                    setTranscript('');
                     setIsProcessing(false);
                 };
 
@@ -198,6 +237,11 @@ Example: "That sounds like you'd love our CX-5! RECOMMEND: CX-5"`;
                         setTranscript('');
                         recognitionRef.current?.start();
                     }
+                };
+
+                const handleGuidanceClick = (prompt) => {
+                    setTranscript(prompt.text);
+                    setTimeout(() => processUserInput(prompt.text), 100);
                 };
 
                 return React.createElement(
@@ -244,11 +288,11 @@ Example: "That sounds like you'd love our CX-5! RECOMMEND: CX-5"`;
                         // Left Chat Panel
                         React.createElement(
                             'div',
-                            { className: 'w-80 bg-black/40 backdrop-blur-md p-8 flex flex-col overflow-y-auto' },
+                            { className: 'w-80 bg-black/40 backdrop-blur-md p-8 flex flex-col overflow-hidden' },
                             // Chat Messages
                             React.createElement(
                                 'div',
-                                { className: 'flex-1 space-y-4 mb-6' },
+                                { className: 'flex-1 overflow-y-auto space-y-4 mb-6' },
                                 chatMessages.map((msg, idx) =>
                                     React.createElement(
                                         'div',
@@ -266,6 +310,25 @@ Example: "That sounds like you'd love our CX-5! RECOMMEND: CX-5"`;
                                     React.createElement('div', { className: 'w-2 h-2 bg-gray-400 rounded-full animate-bounce' }),
                                     React.createElement('div', { className: 'w-2 h-2 bg-gray-400 rounded-full animate-bounce', style: { animationDelay: '0.1s' } }),
                                     React.createElement('div', { className: 'w-2 h-2 bg-gray-400 rounded-full animate-bounce', style: { animationDelay: '0.2s' } })
+                                ),
+                                React.createElement('div', { ref: chatEndRef })
+                            ),
+                            // Guidance Prompts
+                            !chatMessages.some(m => m.role === 'user') && React.createElement(
+                                'div',
+                                { className: 'mb-4 space-y-2' },
+                                React.createElement('p', { className: 'text-xs text-gray-300 font-light uppercase mb-2' }, 'Or try:'),
+                                GUIDANCE_PROMPTS.map((prompt, idx) =>
+                                    React.createElement(
+                                        'button',
+                                        {
+                                            key: idx,
+                                            onClick: () => handleGuidanceClick(prompt),
+                                            disabled: isProcessing || isListening,
+                                            className: 'w-full text-left px-3 py-2 bg-gray-400/60 text-gray-900 text-xs rounded hover:bg-gray-400 transition-colors disabled:opacity-50 font-light'
+                                        },
+                                        prompt.text
+                                    )
                                 )
                             ),
                             // Transcript Display
@@ -302,8 +365,8 @@ Example: "That sounds like you'd love our CX-5! RECOMMEND: CX-5"`;
                                         'div',
                                         {
                                             key: vehicle.id,
-                                            className: `flex flex-col items-center transition-all duration-300 cursor-pointer ${
-                                                selectedVehicles.some(v => v.toLowerCase().includes(vehicle.shortName.split('\n')[0].toLowerCase()) || vehicle.shortName.toLowerCase().includes(v.toLowerCase()))
+                                            className: `flex flex-col items-center transition-all duration-300 ${
+                                                selectedVehicles.length === 0 || selectedVehicles.includes(vehicle.displayName)
                                                     ? 'opacity-100'
                                                     : 'opacity-30 blur-sm'
                                             }`,
@@ -325,7 +388,9 @@ Example: "That sounds like you'd love our CX-5! RECOMMEND: CX-5"`;
                                 'div',
                                 { className: 'absolute bottom-8 left-8 bg-white/90 backdrop-blur-sm px-6 py-4 rounded text-gray-900 max-w-xs' },
                                 React.createElement('p', { className: 'text-sm font-light' },
-                                    `Starting at $${VEHICLES.find(v => selectedVehicles.some(s => v.shortName.toLowerCase().includes(s.toLowerCase()) || s.toLowerCase().includes(v.shortName.split('\n')[0].toLowerCase())))?.price.toLocaleString() || '25,650'}`
+                                    selectedVehicles.length === 1
+                                        ? `${selectedVehicles[0]} - Starting at $${VEHICLES.find(v => v.displayName === selectedVehicles[0])?.price.toLocaleString()}`
+                                        : `${selectedVehicles.join(' & ')} - Starting at $${Math.min(...selectedVehicles.map(name => VEHICLES.find(v => v.displayName === name)?.price || 0)).toLocaleString()}`
                                 )
                             )
                         )
