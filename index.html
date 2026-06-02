@@ -20,17 +20,12 @@
 
             const { useState, useRef, useEffect, useMemo } = React;
 
+            const GEMINI_API_KEY = 'AIzaSyART6Jhz9ALb7h8PuEUCVOaBNRJhy-qU_k';
+            const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
+
             // SVG Icons
-            const MazdaLogo = () => React.createElement('svg', { className: 'w-8 h-8 text-white', viewBox: '0 0 24 24', fill: 'currentColor' },
-                React.createElement('path', { d: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z' })
-            );
-
-            const Send = () => React.createElement('svg', { className: 'w-5 h-5', fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' },
-                React.createElement('path', { strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'M13 5l7 7m0 0l-7 7m7-7H6' })
-            );
-
-            const Mic = () => React.createElement('svg', { className: 'w-5 h-5', fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' },
-                React.createElement('path', { strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'M12 14.828v-6.656M9 4a3 3 0 116 0H9zm6 14.04c2.062-.694 3.521-2.227 3.521-3.978 0-1.29-.552-2.458-1.415-3.28M4 12h16' })
+            const Mic = (props) => React.createElement('svg', { ...props, fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' },
+                React.createElement('path', { strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4' })
             );
 
             const MapPin = () => React.createElement('svg', { className: 'w-4 h-4', fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' },
@@ -46,72 +41,163 @@
                 React.createElement('path', { d: 'M13 2L3 14h9l-1 8 10-12h-9l1-8z' })
             );
 
+            const Stop = () => React.createElement('svg', { className: 'w-6 h-6', fill: 'currentColor', viewBox: '0 0 24 24' },
+                React.createElement('rect', { x: '6', y: '6', width: '12', height: '12', rx: '2' })
+            );
+
             // Vehicle Data
             const VEHICLES = [
-                { id: 1, name: 'MAZDA3\nHATCHBACK', shortName: 'Mazda3', price: 25650, category: 'Cars', color: 'red', width: '90px', xPos: '2%' },
-                { id: 2, name: 'MAZDA3\nSEDAN', shortName: 'Mazda3', price: 26150, category: 'Cars', color: 'gray', width: '90px', xPos: '12%' },
-                { id: 3, name: 'MX-5\nMIATA', shortName: 'MX-5', price: 30430, category: 'Cars', color: 'red', width: '90px', xPos: '22%' },
-                { id: 4, name: 'CX-30', shortName: 'CX-30', price: 28500, category: 'SUVs', color: 'gray', width: '100px', xPos: '35%' },
-                { id: 5, name: 'CX-5', shortName: 'CX-5', price: 31000, category: 'SUVs', color: 'white', width: '120px', xPos: '48%' },
-                { id: 6, name: 'CX-50', shortName: 'CX-50', price: 34750, category: 'SUVs', color: 'white', width: '120px', xPos: '62%' },
-                { id: 7, name: 'CX-70', shortName: 'CX-70', price: 42750, category: 'SUVs', color: 'gray', width: '130px', xPos: '76%' },
-                { id: 8, name: 'CX-90', shortName: 'CX-90', price: 50695, category: 'SUVs', color: 'red', width: '130px', xPos: '90%' },
+                { id: 1, name: 'MAZDA3\nHATCHBACK', shortName: 'Mazda3 Hatchback', price: 25650, keywords: ['hatchback', 'compact', 'affordable', 'fun', 'agile', 'urban', 'budget-friendly', 'economical'] },
+                { id: 2, name: 'MAZDA3\nSEDAN', shortName: 'Mazda3 Sedan', price: 26150, keywords: ['sedan', 'compact', 'affordable', 'practical', 'commute', 'daily', 'economical'] },
+                { id: 3, name: 'MX-5\nMIATA', shortName: 'MX-5 Miata', price: 30430, keywords: ['miata', 'roadster', 'convertible', 'sports', 'fun', 'lightweight', 'performance', 'weekend', 'affordable', 'sporty'] },
+                { id: 4, name: 'CX-30', shortName: 'CX-30', price: 28500, keywords: ['cx-30', 'crossover', 'compact', 'affordable', 'practical', 'suv'] },
+                { id: 5, name: 'CX-5', shortName: 'CX-5', price: 31000, keywords: ['cx-5', 'crossover', 'suv', 'family', 'spacious', 'practical', 'google built-in', 'redesigned', 'new'] },
+                { id: 6, name: 'CX-50', shortName: 'CX-50', price: 34750, keywords: ['cx-50', 'hybrid', 'efficient', 'outdoor', 'rugged', 'fuel economy', 'eco-friendly', 'all-wheel-drive'] },
+                { id: 7, name: 'CX-70', shortName: 'CX-70', price: 42750, keywords: ['cx-70', 'performance', 'luxury', 'powerful', 'cargo', 'sporty', 'turbo', 'premium', 'hp'] },
+                { id: 8, name: 'CX-90', shortName: 'CX-90', price: 50695, keywords: ['cx-90', 'phev', 'family', '3-row', 'seats', 'luxury', 'spacious', 'electric', 'hybrid', 'premium'] },
             ];
 
-            const QUICK_REPLIES = [
-                { text: 'I would love some help finding the right car.', category: null },
-                { text: 'Show me sporty, fun cars', category: 'Cars' },
-                { text: 'I need a spacious family SUV', category: 'SUVs' },
-                { text: 'What\'s the most affordable Mazda?', category: null },
-            ];
+            async function callGeminiAPI(userInput) {
+                const systemPrompt = `You are a Mazda vehicle recommendation assistant. Based on what the user says, recommend 1-2 Mazda models from: Mazda3 Hatchback, Mazda3 Sedan, MX-5 Miata, CX-30, CX-5, CX-50, CX-70, CX-90.
+
+Respond with:
+1. A brief friendly response (1-2 sentences)
+2. Vehicle recommendations in this format at the end: RECOMMEND: [vehicle name], [vehicle name]
+
+Example: "That sounds like you'd love our CX-5! RECOMMEND: CX-5"`;
+
+                try {
+                    const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{
+                                parts: [{
+                                    text: `${systemPrompt}\n\nUser says: "${userInput}"`
+                                }]
+                            }],
+                            generationConfig: {
+                                temperature: 0.7,
+                                maxOutputTokens: 150,
+                            }
+                        })
+                    });
+
+                    const data = await response.json();
+                    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+                    return text;
+                } catch (error) {
+                    console.error('Gemini API error:', error);
+                    return 'Sorry, I encountered an error. Please try again.';
+                }
+            }
+
+            function extractVehicleNames(geminiResponse) {
+                const recommendMatch = geminiResponse.match(/RECOMMEND:\s*(.+?)(?:\n|$)/i);
+                if (!recommendMatch) return [];
+
+                const names = recommendMatch[1].split(',').map(name => name.trim());
+                return names.filter(name => VEHICLES.some(v => v.shortName.toLowerCase().includes(name.toLowerCase())));
+            }
 
             function MazdaShowcase() {
                 const [chatMessages, setChatMessages] = useState([
-                    { role: 'assistant', text: 'Welcome to Mazda. Do you know which model you would like to explore or would like help finding the right Mazda driving experience for you?' }
+                    { role: 'assistant', text: 'Welcome to Mazda. Click the microphone and tell me what you\'re looking for.' }
                 ]);
-                const [inputValue, setInputValue] = useState('');
-                const [selectedVehicle, setSelectedVehicle] = useState(null);
-                const [isAnalyzing, setIsAnalyzing] = useState(false);
-                const chatEndRef = useRef(null);
+                const [selectedVehicles, setSelectedVehicles] = useState([]);
+                const [isListening, setIsListening] = useState(false);
+                const [isProcessing, setIsProcessing] = useState(false);
+                const [transcript, setTranscript] = useState('');
+                const recognitionRef = useRef(null);
+                const synthRef = useRef(window.speechSynthesis);
 
+                // Initialize Web Speech API
                 useEffect(() => {
-                    if (chatEndRef.current) {
-                        chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
+                    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                    if (!SpeechRecognition) {
+                        console.error('Speech Recognition not supported');
+                        return;
                     }
-                }, [chatMessages]);
 
-                const handleQuickReply = (reply) => {
-                    setChatMessages(prev => [...prev, { role: 'user', text: reply.text }]);
-                    setIsAnalyzing(true);
+                    const recognition = new SpeechRecognition();
+                    recognition.continuous = false;
+                    recognition.interimResults = true;
+                    recognition.lang = 'en-US';
 
-                    setTimeout(() => {
-                        if (reply.category === 'Cars') {
-                            setSelectedVehicle(['Mazda3', 'MX-5']);
-                            setChatMessages(prev => [...prev, {
-                                role: 'assistant',
-                                text: 'Great! I\'ve highlighted our fun and sporty cars. The Mazda3 offers premium cabin feel with agile handling, while the MX-5 Miata is the ultimate lightweight driving experience.'
-                            }]);
-                        } else if (reply.category === 'SUVs') {
-                            setSelectedVehicle(['CX-5', 'CX-90']);
-                            setChatMessages(prev => [...prev, {
-                                role: 'assistant',
-                                text: 'Perfect! The CX-5 is our all-new redesigned crossover with Google Built-In, and the CX-90 PHEV is our premium 3-row family vehicle with room for everyone.'
-                            }]);
-                        } else {
-                            setSelectedVehicle(['Mazda3']);
-                            setChatMessages(prev => [...prev, {
-                                role: 'assistant',
-                                text: 'The Mazda3 Hatchback at $25,650 is our most affordable model. It combines premium cabin design with practical everyday driving.'
-                            }]);
+                    recognition.onstart = () => {
+                        setIsListening(true);
+                        setTranscript('');
+                    };
+
+                    recognition.onresult = (event) => {
+                        let interim = '';
+                        for (let i = event.resultIndex; i < event.results.length; i++) {
+                            const transcript = event.results[i][0].transcript;
+                            if (event.results[i].isFinal) {
+                                interim += transcript + ' ';
+                            }
                         }
-                        setIsAnalyzing(false);
-                    }, 1200);
+                        setTranscript(interim);
+                    };
+
+                    recognition.onend = async () => {
+                        setIsListening(false);
+                        if (transcript.trim()) {
+                            await processUserInput(transcript.trim());
+                        }
+                    };
+
+                    recognition.onerror = (event) => {
+                        console.error('Speech recognition error:', event.error);
+                        setIsListening(false);
+                    };
+
+                    recognitionRef.current = recognition;
+                }, [transcript]);
+
+                const processUserInput = async (userText) => {
+                    setIsProcessing(true);
+
+                    // Add user message
+                    setChatMessages(prev => [...prev, { role: 'user', text: userText }]);
+
+                    // Get Gemini response
+                    const geminiResponse = await callGeminiAPI(userText);
+
+                    // Extract vehicle names from response
+                    const vehicleNames = extractVehicleNames(geminiResponse);
+                    setSelectedVehicles(vehicleNames);
+
+                    // Extract main response text (before RECOMMEND:)
+                    const mainResponse = geminiResponse.split('RECOMMEND:')[0].trim();
+
+                    // Add assistant message
+                    setChatMessages(prev => [...prev, { role: 'assistant', text: mainResponse }]);
+
+                    // Speak response
+                    speakResponse(mainResponse);
+                    setIsProcessing(false);
                 };
 
-                const handleSubmit = () => {
-                    if (!inputValue.trim()) return;
-                    handleQuickReply({ text: inputValue, category: null });
-                    setInputValue('');
+                const speakResponse = (text) => {
+                    if (synthRef.current.speaking) {
+                        synthRef.current.cancel();
+                    }
+
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.rate = 1;
+                    utterance.pitch = 1;
+                    utterance.volume = 1;
+                    synthRef.current.speak(utterance);
+                };
+
+                const toggleListening = () => {
+                    if (isListening) {
+                        recognitionRef.current?.stop();
+                    } else {
+                        setTranscript('');
+                        recognitionRef.current?.start();
+                    }
                 };
 
                 return React.createElement(
@@ -124,7 +210,6 @@
                         React.createElement(
                             'div',
                             { className: 'flex items-center justify-between px-8 py-4' },
-                            // Left Nav
                             React.createElement(
                                 'div',
                                 { className: 'flex items-center gap-8' },
@@ -132,13 +217,11 @@
                                 React.createElement('div', { className: 'text-white text-xs font-light tracking-widest' }, 'SHOPPING TOOLS'),
                                 React.createElement('div', { className: 'text-white text-xs font-light tracking-widest' }, 'WHAT DRIVES US')
                             ),
-                            // Center Logo
                             React.createElement(
                                 'div',
                                 { className: 'absolute left-1/2 transform -translate-x-1/2' },
                                 React.createElement('div', { className: 'w-8 h-8 border-2 border-white rounded-full' })
                             ),
-                            // Right Nav
                             React.createElement(
                                 'div',
                                 { className: 'flex items-center gap-6' },
@@ -177,56 +260,40 @@
                                         )
                                     )
                                 ),
-                                isAnalyzing && React.createElement(
+                                isProcessing && React.createElement(
                                     'div',
                                     { className: 'flex gap-2 items-center' },
                                     React.createElement('div', { className: 'w-2 h-2 bg-gray-400 rounded-full animate-bounce' }),
                                     React.createElement('div', { className: 'w-2 h-2 bg-gray-400 rounded-full animate-bounce', style: { animationDelay: '0.1s' } }),
                                     React.createElement('div', { className: 'w-2 h-2 bg-gray-400 rounded-full animate-bounce', style: { animationDelay: '0.2s' } })
-                                ),
-                                React.createElement('div', { ref: chatEndRef })
-                            ),
-                            // Quick Replies
-                            React.createElement(
-                                'div',
-                                { className: 'space-y-2 mb-4' },
-                                QUICK_REPLIES.map((reply, idx) =>
-                                    React.createElement(
-                                        'button',
-                                        {
-                                            key: idx,
-                                            onClick: () => handleQuickReply(reply),
-                                            disabled: isAnalyzing,
-                                            className: 'w-full text-left px-4 py-3 bg-gray-400 text-gray-900 text-sm rounded hover:bg-gray-300 transition-colors disabled:opacity-50 font-light'
-                                        },
-                                        reply.text
-                                    )
                                 )
                             ),
-                            // Input
-                            React.createElement(
+                            // Transcript Display
+                            transcript && React.createElement(
                                 'div',
-                                { className: 'flex gap-2 items-center bg-gray-400 px-4 py-3 rounded' },
-                                React.createElement(Spark, null),
-                                React.createElement(
-                                    'input',
-                                    {
-                                        type: 'text',
-                                        value: inputValue,
-                                        onChange: e => setInputValue(e.target.value),
-                                        onKeyPress: e => e.key === 'Enter' && handleSubmit(),
-                                        placeholder: 'Ask anything',
-                                        className: 'flex-1 bg-transparent text-gray-900 placeholder-gray-600 outline-none text-sm'
-                                    }
-                                ),
-                                React.createElement('button', { onClick: handleSubmit, className: 'text-gray-600 hover:text-gray-900' }, React.createElement(Mic, null))
+                                { className: 'mb-4 p-3 bg-white/20 rounded text-white text-sm italic' },
+                                `"${transcript}"`
+                            ),
+                            // Mic Button
+                            React.createElement(
+                                'button',
+                                {
+                                    onClick: toggleListening,
+                                    disabled: isProcessing,
+                                    className: `flex items-center justify-center gap-3 w-full px-6 py-4 rounded-lg font-semibold transition-all ${
+                                        isListening
+                                            ? 'bg-red-600 text-white pulse'
+                                            : 'bg-gray-400 text-gray-900 hover:bg-gray-300'
+                                    } disabled:opacity-50`
+                                },
+                                React.createElement(isListening ? Stop : Mic, { className: 'w-5 h-5' }),
+                                isListening ? 'Listening...' : 'Click to Speak'
                             )
                         ),
                         // Right Vehicle Showcase
                         React.createElement(
                             'div',
                             { className: 'flex-1 bg-gradient-to-b from-gray-200/50 to-gray-300/50 relative flex items-center justify-center px-16' },
-                            // Vehicle Display Area
                             React.createElement(
                                 'div',
                                 { className: 'relative w-full h-96 flex items-end justify-center gap-4' },
@@ -236,13 +303,14 @@
                                         {
                                             key: vehicle.id,
                                             className: `flex flex-col items-center transition-all duration-300 cursor-pointer ${
-                                                selectedVehicle?.includes(vehicle.shortName) ? 'opacity-100' : 'opacity-30 blur-sm'
+                                                selectedVehicles.some(v => v.toLowerCase().includes(vehicle.shortName.split('\n')[0].toLowerCase()) || vehicle.shortName.toLowerCase().includes(v.toLowerCase()))
+                                                    ? 'opacity-100'
+                                                    : 'opacity-30 blur-sm'
                                             }`,
-                                            onClick: () => setSelectedVehicle([vehicle.shortName])
                                         },
                                         React.createElement(
                                             'div',
-                                            { className: `${vehicle.color === 'red' ? 'bg-red-500' : vehicle.color === 'white' ? 'bg-white' : 'bg-gray-400'} rounded-full mb-2`, style: { width: vehicle.width, height: '140px' } }
+                                            { className: `${vehicle.id <= 3 ? 'bg-red-500' : vehicle.id === 5 ? 'bg-white' : 'bg-gray-400'} rounded-full mb-2`, style: { width: vehicle.id <= 3 ? '90px' : vehicle.id <= 4 ? '100px' : vehicle.id <= 6 ? '120px' : '130px', height: '140px' } }
                                         ),
                                         React.createElement(
                                             'div',
@@ -253,11 +321,11 @@
                                 )
                             ),
                             // Info Display
-                            selectedVehicle && React.createElement(
+                            selectedVehicles.length > 0 && React.createElement(
                                 'div',
                                 { className: 'absolute bottom-8 left-8 bg-white/90 backdrop-blur-sm px-6 py-4 rounded text-gray-900 max-w-xs' },
                                 React.createElement('p', { className: 'text-sm font-light' },
-                                    `Starting at $${VEHICLES.find(v => v.shortName === selectedVehicle[0])?.price.toLocaleString()}`
+                                    `Starting at $${VEHICLES.find(v => selectedVehicles.some(s => v.shortName.toLowerCase().includes(s.toLowerCase()) || s.toLowerCase().includes(v.shortName.split('\n')[0].toLowerCase())))?.price.toLocaleString() || '25,650'}`
                                 )
                             )
                         )
@@ -271,5 +339,15 @@
 
         startApp();
     </script>
+
+    <style>
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+    </style>
 </body>
 </html>
