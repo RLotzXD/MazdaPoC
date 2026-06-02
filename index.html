@@ -150,6 +150,7 @@ Be brief and friendly (1-2 sentences before VEHICLES line).`;
                 const recognitionRef = useRef(null);
                 const synthRef = useRef(window.speechSynthesis);
                 const chatEndRef = useRef(null);
+                const transcriptRef = useRef('');  // Track final transcript
 
                 useEffect(() => {
                     if (chatEndRef.current) {
@@ -183,13 +184,17 @@ Be brief and friendly (1-2 sentences before VEHICLES line).`;
                                 interim += trans + ' ';
                             }
                         }
-                        if (interim) setTranscript(interim);
+                        if (interim) {
+                            setTranscript(interim);
+                            transcriptRef.current = interim;  // Store in ref
+                        }
                     };
 
                     recognition.onend = async () => {
                         setIsListening(false);
-                        if (transcript.trim()) {
-                            await processUserInput(transcript.trim());
+                        if (transcriptRef.current.trim()) {
+                            await processUserInput(transcriptRef.current.trim());
+                            transcriptRef.current = '';  // Clear after processing
                         }
                     };
 
