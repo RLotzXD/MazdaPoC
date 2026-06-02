@@ -147,6 +147,7 @@ Be brief and friendly (1-2 sentences before VEHICLES line).`;
                 const [isListening, setIsListening] = useState(false);
                 const [isProcessing, setIsProcessing] = useState(false);
                 const [transcript, setTranscript] = useState('');
+                const [displayMode, setDisplayMode] = useState('blur');  // 'blur', 'carousel', 'card-highlight', 'animated-focus'
                 const recognitionRef = useRef(null);
                 const synthRef = useRef(window.speechSynthesis);
                 const chatEndRef = useRef(null);
@@ -298,6 +299,31 @@ Be brief and friendly (1-2 sentences before VEHICLES line).`;
                         React.createElement(
                             'div',
                             { className: 'w-80 bg-black/40 backdrop-blur-md p-8 flex flex-col overflow-hidden' },
+                            // Display Mode Selector
+                            React.createElement(
+                                'div',
+                                { className: 'mb-4 p-3 bg-gray-600/40 rounded border border-gray-400/30' },
+                                React.createElement('p', { className: 'text-xs text-gray-300 font-light uppercase mb-2' }, 'Display Mode:'),
+                                React.createElement(
+                                    'div',
+                                    { className: 'flex flex-wrap gap-1' },
+                                    ['blur', 'carousel', 'card-highlight', 'animated-focus'].map(mode =>
+                                        React.createElement(
+                                            'button',
+                                            {
+                                                key: mode,
+                                                onClick: () => setDisplayMode(mode),
+                                                className: `px-2 py-1 text-xs rounded transition-all ${
+                                                    displayMode === mode
+                                                        ? 'bg-red-600 text-white'
+                                                        : 'bg-gray-500/40 text-gray-200 hover:bg-gray-500/60'
+                                                }`
+                                            },
+                                            mode.replace('-', ' ').toUpperCase()
+                                        )
+                                    )
+                                )
+                            ),
                             // Chat Messages
                             React.createElement(
                                 'div',
@@ -369,28 +395,96 @@ Be brief and friendly (1-2 sentences before VEHICLES line).`;
                             React.createElement(
                                 'div',
                                 { className: 'relative w-full h-96 flex items-end justify-center gap-4' },
-                                VEHICLES.map(vehicle =>
+                                displayMode === 'carousel'
+                                    ? // Carousel Mode: Only show selected vehicles
                                     React.createElement(
                                         'div',
-                                        {
-                                            key: vehicle.id,
-                                            className: `flex flex-col items-center transition-all duration-300 ${
-                                                selectedVehicles.length === 0 || selectedVehicles.includes(vehicle.displayName)
-                                                    ? 'opacity-100'
-                                                    : 'opacity-30 blur-sm'
-                                            }`,
-                                        },
+                                        { className: 'flex items-end justify-center gap-6 h-full' },
+                                        selectedVehicles.length > 0
+                                            ? selectedVehicles.slice(0, 2).map(selectedName =>
+                                                VEHICLES.find(v => v.displayName === selectedName)
+                                            ).filter(Boolean).map(vehicle =>
+                                                React.createElement(
+                                                    'div',
+                                                    { key: vehicle.id, className: 'flex flex-col items-center animate-fadeIn' },
+                                                    React.createElement('div', { className: 'bg-gradient-to-b from-red-400 to-red-600 rounded-full mb-2 shadow-2xl', style: { width: '150px', height: '180px' } }),
+                                                    React.createElement('div', { className: 'text-center text-white text-sm font-semibold' }, vehicle.name)
+                                                )
+                                            )
+                                            : React.createElement('div', { className: 'text-gray-400 text-sm' }, 'Select a vehicle to see details')
+                                    )
+                                    : displayMode === 'card-highlight'
+                                    ? // Card Highlight Mode: All visible, recommended highlighted
+                                    VEHICLES.map(vehicle =>
                                         React.createElement(
                                             'div',
-                                            { className: `${vehicle.id <= 3 ? 'bg-red-500' : vehicle.id === 5 ? 'bg-white' : 'bg-gray-400'} rounded-full mb-2`, style: { width: vehicle.id <= 3 ? '90px' : vehicle.id <= 4 ? '100px' : vehicle.id <= 6 ? '120px' : '130px', height: '140px' } }
-                                        ),
-                                        React.createElement(
-                                            'div',
-                                            { className: 'text-center text-gray-900 text-xs font-light tracking-wider whitespace-pre-line' },
-                                            vehicle.name
+                                            {
+                                                key: vehicle.id,
+                                                className: `flex flex-col items-center transition-all duration-300 ${
+                                                    selectedVehicles.includes(vehicle.displayName)
+                                                        ? 'scale-110 drop-shadow-2xl'
+                                                        : 'opacity-60'
+                                                }`,
+                                            },
+                                            React.createElement(
+                                                'div',
+                                                {
+                                                    className: `${vehicle.id <= 3 ? 'bg-red-500' : vehicle.id === 5 ? 'bg-white' : 'bg-gray-400'} rounded-full mb-2 ${
+                                                        selectedVehicles.includes(vehicle.displayName)
+                                                            ? 'ring-4 ring-yellow-300 shadow-2xl shadow-yellow-300/50'
+                                                            : ''
+                                                    }`,
+                                                    style: { width: vehicle.id <= 3 ? '90px' : vehicle.id <= 4 ? '100px' : vehicle.id <= 6 ? '120px' : '130px', height: '140px' }
+                                                }
+                                            ),
+                                            React.createElement('div', { className: 'text-center text-gray-900 text-xs font-light tracking-wider whitespace-pre-line' }, vehicle.name)
                                         )
                                     )
-                                )
+                                    : displayMode === 'animated-focus'
+                                    ? // Animated Focus Mode: All visible, recommended pulsing
+                                    VEHICLES.map(vehicle =>
+                                        React.createElement(
+                                            'div',
+                                            {
+                                                key: vehicle.id,
+                                                className: `flex flex-col items-center transition-all duration-300 ${
+                                                    selectedVehicles.includes(vehicle.displayName)
+                                                        ? 'animate-pulse'
+                                                        : 'opacity-50'
+                                                }`,
+                                            },
+                                            React.createElement(
+                                                'div',
+                                                {
+                                                    className: `${vehicle.id <= 3 ? 'bg-red-500' : vehicle.id === 5 ? 'bg-white' : 'bg-gray-400'} rounded-full mb-2 ${
+                                                        selectedVehicles.includes(vehicle.displayName)
+                                                            ? 'shadow-2xl shadow-red-500/70 border-4 border-red-400'
+                                                            : ''
+                                                    }`,
+                                                    style: { width: vehicle.id <= 3 ? '90px' : vehicle.id <= 4 ? '100px' : vehicle.id <= 6 ? '120px' : '130px', height: '140px' }
+                                                }
+                                            ),
+                                            React.createElement('div', { className: `text-center text-gray-900 text-xs font-light tracking-wider whitespace-pre-line ${
+                                                selectedVehicles.includes(vehicle.displayName) ? 'text-red-600 font-semibold' : ''
+                                            }` }, vehicle.name)
+                                        )
+                                    )
+                                    : // Default Blur Mode
+                                    VEHICLES.map(vehicle =>
+                                        React.createElement(
+                                            'div',
+                                            {
+                                                key: vehicle.id,
+                                                className: `flex flex-col items-center transition-all duration-300 ${
+                                                    selectedVehicles.length === 0 || selectedVehicles.includes(vehicle.displayName)
+                                                        ? 'opacity-100'
+                                                        : 'opacity-30 blur-sm'
+                                                }`,
+                                            },
+                                            React.createElement('div', { className: `${vehicle.id <= 3 ? 'bg-red-500' : vehicle.id === 5 ? 'bg-white' : 'bg-gray-400'} rounded-full mb-2`, style: { width: vehicle.id <= 3 ? '90px' : vehicle.id <= 4 ? '100px' : vehicle.id <= 6 ? '120px' : '130px', height: '140px' } }),
+                                            React.createElement('div', { className: 'text-center text-gray-900 text-xs font-light tracking-wider whitespace-pre-line' }, vehicle.name)
+                                        )
+                                    )
                             ),
                             // Info Display
                             selectedVehicles.length > 0 && React.createElement(
@@ -421,6 +515,13 @@ Be brief and friendly (1-2 sentences before VEHICLES line).`;
         @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.7; }
+        }
+        .animate-fadeIn {
+            animation: fadeIn 0.6s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
         }
     </style>
 </body>
