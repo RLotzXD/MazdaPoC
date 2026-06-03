@@ -26,7 +26,7 @@
 
             const { useState, useRef, useEffect, useMemo } = React;
 
-            // API key is now stored securely in Vercel environment variables
+            // API key is stored securely in Vercel environment variables
             // The frontend calls /api/gemini endpoint instead
 
             // SVG Icons
@@ -150,11 +150,11 @@
                     this.scene.fog = new THREE.Fog(0xd4d4d8, 1000, 5000);
 
                     // Camera
-                    const width = this.canvas.clientWidth;
-                    const height = this.canvas.clientHeight;
+                    const width = this.canvas.clientWidth || window.innerWidth;
+                    const height = this.canvas.clientHeight || window.innerHeight;
                     this.camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 10000);
-                    this.camera.position.set(0, 300, 600);
-                    this.camera.lookAt(0, 0, 0);
+                    this.camera.position.set(0, 200, 300);
+                    this.camera.lookAt(0, 20, 0);
 
                     // Renderer
                     this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas, antialias: true });
