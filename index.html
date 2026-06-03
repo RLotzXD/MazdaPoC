@@ -26,8 +26,8 @@
 
             const { useState, useRef, useEffect, useMemo } = React;
 
-            const GEMINI_API_KEY = 'AIzaSyART6Jhz9ALb7h8PuEUCVOaBNRJhy-qU_k';
-            const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+            // API key is now stored securely in Vercel environment variables
+            // The frontend calls /api/gemini endpoint instead
 
             // SVG Icons
             const MapPin = () => React.createElement('svg', { className: 'w-4 h-4', fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' },
@@ -67,43 +67,25 @@
             ];
 
             async function callGeminiAPI(userInput) {
-                const systemPrompt = `You are a Mazda vehicle recommendation assistant. Based on what the customer wants, recommend the BEST 1-2 Mazda models.
-
-Available vehicles: Mazda3 Hatchback, Mazda3 Sedan, MX-5 Miata, CX-30, CX-5, CX-50 Hybrid, CX-70, CX-90 PHEV
-
-IMPORTANT FORMAT - End every response with:
-VEHICLES: [exact vehicle name], [exact vehicle name]
-
-Example: "Perfect! The CX-5 is spacious and practical. VEHICLES: CX-5"
-
-Be brief and friendly (1-2 sentences before VEHICLES line).`;
-
                 try {
-                    console.log('Sending to Gemini API:', userInput);
+                    console.log('Calling secure API endpoint:', userInput);
 
-                    const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+                    const response = await fetch('/api/gemini', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            contents: [{
-                                parts: [{
-                                    text: `${systemPrompt}\n\nCustomer: "${userInput}"`
-                                }]
-                            }]
-                        })
+                        body: JSON.stringify({ userInput })
                     });
 
                     const data = await response.json();
-                    console.log('Full API response:', JSON.stringify(data, null, 2));
+                    console.log('API response:', data);
 
                     if (!response.ok || data.error) {
-                        const errorMsg = data.error?.message || `API error: ${response.status}`;
+                        const errorMsg = data.error || `API error: ${response.status}`;
                         console.error('API Error:', errorMsg);
                         throw new Error(errorMsg);
                     }
 
-                    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-                    console.log('Extracted text:', text);
+                    const text = data.text || '';
 
                     if (!text) {
                         throw new Error('No response from API');
