@@ -278,6 +278,7 @@ Be brief and friendly (1-2 sentences before VEHICLES line).`;
                         car.position.set(xPos, 20, 0);
                         car.castShadow = true;
                         car.receiveShadow = true;
+                        car.userData = { isSelected: false };
                         this.scene.add(car);
                         this.cars.push({ object: car, index: index, isSelected: false });
                     });
@@ -294,19 +295,24 @@ Be brief and friendly (1-2 sentences before VEHICLES line).`;
                         car.isSelected = isSelected;
 
                         // Update scale and material
+                        if (isSelected) {
+                            car.object.scale.set(1.15, 1.15, 1.15);
+                        } else {
+                            car.object.scale.set(1, 1, 1);
+                        }
+
                         car.object.traverse((child) => {
-                            if (child.isMesh) {
-                                if (isSelected) {
-                                    // Highlight: scale up
-                                    child.scale.set(1.15, 1.15, 1.15);
-                                    child.material.emissive = new THREE.Color(0xffaa00);
-                                    child.material.emissiveIntensity = 0.5;
-                                } else {
-                                    // Non-selected: normal
-                                    child.scale.set(1, 1, 1);
-                                    child.material.emissive = new THREE.Color(0x000000);
-                                    child.material.emissiveIntensity = 0;
-                                }
+                            if (child.isMesh && child.material) {
+                                const materials = Array.isArray(child.material) ? child.material : [child.material];
+                                materials.forEach(mat => {
+                                    if (isSelected) {
+                                        mat.emissive = new THREE.Color(0xffaa00);
+                                        mat.emissiveIntensity = 0.5;
+                                    } else {
+                                        mat.emissive = new THREE.Color(0x000000);
+                                        mat.emissiveIntensity = 0;
+                                    }
+                                });
                             }
                         });
                     });
